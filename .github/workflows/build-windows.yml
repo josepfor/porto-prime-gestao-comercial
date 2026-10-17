@@ -4,7 +4,7 @@ name: Gerar Porto Prime Windows EXE
 
 on:
   push:
-    branches: [main, 'fix/**']
+    branches: [main, 'fix/**', 'feature/**']
     paths:
       - 'package.json'
       - 'package-lock.json'
@@ -72,6 +72,7 @@ jobs:
           node scripts/check-management-report.mjs
           node scripts/check-stability-420.mjs
           node scripts/check-server-integrity.cjs
+          node scripts/check-sale-idempotency.cjs
           node scripts/check-stock-intelligence.mjs
           node scripts/check-seller-performance.mjs
           node scripts/check-data-directory.cjs
