@@ -2,6 +2,7 @@ const money=n=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).
 let token=localStorage.cg42token||localStorage.cg41token||'',me=null,cart=[],payments=[{method:'Dinheiro',amount:0,touched:false}],purchaseCart=[],quoteCart=[],cashReceived=0;
 let activeQuoteEditId=null,pdvQuoteId=null,pdvQuoteCustomerId=null,pdvQuoteDiscountPct=0;
 let pdvLookupTimer=null,pdvLookupSeq=0,pdvNetworkTimer=null,pdvNetworkOnline=true,pdvResultCursor=0,pdvDiscountMode='PERCENT',pdvDiscountValue=0;
+let pdvPendingRequestId=null;
 const hasPerm=k=>me?.role==='Administrador'||!!me?.permissions?.[k];
 async function api(url,opt={}){let r=await fetch('/api'+url,{...opt,headers:{'Content-Type':'application/json',Authorization:'Bearer '+token,...opt.headers}}),j=await r.json().catch(()=>({}));if(r.status===401){if(url!=='/auth/login'&&token){logout();throw Error(j.error||'Sessão expirada')}throw Error(j.error||'E-mail ou senha incorretos.')}if(r.status===402){showActivation(j);throw Error(j.error||'Licença necessária')}if(!r.ok)throw Error(j.error||'Erro na operação');return j}
 function toast(x){let t=document.getElementById('toast');t.textContent=x;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300)}
@@ -436,9 +437,12 @@ async function finishSale(){
   if(Math.abs(total-sum)>.01)return alert(`Pagamentos somam ${money(sum)}, mas o total é ${money(total)}.`);
   let cashDue=payments.reduce((a,p)=>a+(p.method==='Dinheiro'?(+p.amount||0):0),0);
   if(cashDue&&cashReceived>0&&cashReceived+0.001<cashDue)return alert('Dinheiro recebido é menor que o valor em dinheiro da venda.');
+  const requestId=pdvPendingRequestId||(window.crypto?.randomUUID?window.crypto.randomUUID():('pdv-'+Date.now()+'-'+Math.random().toString(36).slice(2)));
+  pdvPendingRequestId=requestId;
   pdvFinishing=true;let btn=document.querySelector('.legacy-finish');if(btn){btn.disabled=true;btn.textContent='FINALIZANDO...'}
   try{
-    let s=await api('/sales-v42',{method:'POST',body:JSON.stringify({
+    let s=await api('/sales-v42',{method:'POST',signal:AbortSignal.timeout(30000),body:JSON.stringify({
+      request_id:requestId,
       customer_id:+document.getElementById('pdvCustomer')?.value||null,
       quote_id:pdvQuoteId||null,
       discount_percent,
@@ -446,11 +450,16 @@ async function finishSale(){
       items:cart.map(i=>({product_id:i.product_id,qty:i.qty,unit_price:pdvUnitPrice(i)})),
       payments
     })});
+    pdvPendingRequestId=null;
     let received=cashReceived||cashDue,change=Math.max(0,received-cashDue);
     cart=[];pdvSelected=-1;payments=[{method:'Dinheiro',amount:0,touched:false}];cashReceived=0;pdvResetDiscount();
     pdvApprovalToken=null;pdvApprovalBy='';pdvQuoteId=null;pdvQuoteCustomerId=null;pdvQuoteDiscountPct=0;toast('Venda #'+s.id+' finalizada.');render('pdv');
     setTimeout(()=>askPrintReceipt(s.id,total,received,change),250)
-  }catch(e){alert(e.message)}
+  }catch(e){
+    if(e.status===400)pdvPendingRequestId=null;
+    if(!e.status||e.status>=500||e.status===409)alert('Não foi possível confirmar com segurança o resultado desta venda. A tentativa foi preservada para evitar duplicidade. Verifique a lista de vendas antes de iniciar outra venda. Se repetir com o mesmo carrinho, o sistema reutilizará o identificador da tentativa.\n\nDetalhe: '+(e.message||'tempo limite ou falha de comunicação.'));
+    else alert(e.message)
+  }
   finally{pdvFinishing=false}
 }
 
