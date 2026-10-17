@@ -1,6 +1,6 @@
 {
   "name": "construgest-desktop-standalone",
-  "version": "4.4.7",
+  "version": "4.4.8",
   "private": true,
   "type": "module",
   "scripts": {
@@ -20,6 +20,7 @@
     "check:reports": "node scripts/check-management-report.mjs",
     "check:stability": "node scripts/check-stability-420.mjs",
     "check:server": "node scripts/check-server-integrity.cjs",
+    "check:sale-idempotency": "node scripts/check-sale-idempotency.cjs",
     "check:stock-intelligence": "node scripts/check-stock-intelligence.mjs",
     "check:seller-performance": "node scripts/check-seller-performance.mjs",
     "check:data-directory": "node scripts/check-data-directory.cjs",
