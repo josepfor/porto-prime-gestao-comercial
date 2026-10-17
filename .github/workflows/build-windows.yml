@@ -151,7 +151,7 @@ jobs:
         uses: actions/upload-artifact@v4
         continue-on-error: true # A cota de artefatos temporários não deve bloquear a publicação da Release
         with:
-          name: PortoPrime-${{ github.ref_name }}-Windows
+          name: PortoPrime-4.4.8-Windows-RC1
           path: |
             dist/PortoPrime-Portable-4.4.8-x64.exe
             dist/PortoPrime-Setup-4.4.8-x64.exe
