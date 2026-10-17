@@ -4,7 +4,7 @@ name: Gerar Porto Prime Windows EXE
 
 on:
   push:
-    branches: [main, 'fix/**']
+    branches: [main, 'fix/**', 'feature/pdv-otimizacao-enter-esc-watchdog']
     paths:
       - 'package.json'
       - 'package-lock.json'
@@ -64,6 +64,7 @@ jobs:
           node --check src/trial-license.js
           node --check electron-main.cjs
           node --check public/app.js
+          node --check public/pdv-optimization.js
           node scripts/check-critical-functions.cjs
           node scripts/check-trial-license.cjs
           node scripts/check-products.mjs
@@ -150,12 +151,12 @@ jobs:
         uses: actions/upload-artifact@v4
         continue-on-error: true # A cota de artefatos temporários não deve bloquear a publicação da Release
         with:
-          name: PortoPrime-4.4.7-Windows
+          name: PortoPrime-4.4.8-Windows-RC1
           path: |
-            dist/PortoPrime-Portable-4.4.7-x64.exe
-            dist/PortoPrime-Setup-4.4.7-x64.exe
-            dist/PortoPrime-Atualizacao-4.4.7-x64.exe
-            dist/PortoPrime-4.4.7-Windows.zip
+            dist/PortoPrime-Portable-4.4.8-x64.exe
+            dist/PortoPrime-Setup-4.4.8-x64.exe
+            dist/PortoPrime-Atualizacao-4.4.8-x64.exe
+            dist/PortoPrime-4.4.8-Windows.zip
           if-no-files-found: error
           compression-level: 0
 
