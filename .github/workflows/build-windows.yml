@@ -111,9 +111,10 @@ jobs:
             Write-Host "OK: $file - $sizeMB MB"
           }
 
-      - name: Criar pacote ZIP do Porto Prime
+      - name: Criar pacote ZIP e hashes SHA-256
         shell: pwsh
         run: |
+          $ErrorActionPreference = 'Stop'
           $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
           $packageDir = "dist/PortoPrime-$version-Windows"
           $zip = "dist/PortoPrime-$version-Windows.zip"
@@ -123,7 +124,6 @@ jobs:
           }
 
           New-Item -ItemType Directory -Force -Path $packageDir | Out-Null
-
           $files = @(
             "dist/PortoPrime-Portable-$version-x64.exe",
             "dist/PortoPrime-Setup-$version-x64.exe",
@@ -135,21 +135,34 @@ jobs:
           }
 
           Compress-Archive -Path "$packageDir/*" -DestinationPath $zip -Force
-
-          if (-not (Test-Path $zip)) {
-            throw "Pacote ZIP nao foi gerado: $zip"
-          }
-
-          $sizeMB = [math]::Round((Get-Item $zip).Length / 1MB, 2)
-          if ((Get-Item $zip).Length -lt 1MB) {
+          if (-not (Test-Path $zip) -or (Get-Item $zip).Length -lt 1MB) {
             throw "Pacote ZIP suspeito ou vazio: $zip"
           }
 
-          Write-Host "OK: $zip - $sizeMB MB"
+          $allFiles = @($files + $zip)
+          $lines = foreach ($file in $allFiles) {
+            $hash = (Get-FileHash -Algorithm SHA256 $file).Hash.ToLowerInvariant()
+            "$hash  $(Split-Path $file -Leaf)"
+          }
+          $lines | Set-Content -Path "dist/SHA256SUMS.txt" -Encoding ascii
+          Get-Content "dist/SHA256SUMS.txt"
+          Write-Host "OK: pacote ZIP e hashes SHA-256 gerados."
 
-      - name: Disponibilizar arquivos para download
+      # Download separado do instalador: evita obrigar o usuário a baixar
+      # o ZIP agregado de ~574 MB só para obter o instalador.
+      - name: Disponibilizar instalador separado
         uses: actions/upload-artifact@v4
-        continue-on-error: true # A cota de artefatos temporários não deve bloquear a publicação da Release
+        with:
+          name: PortoPrime-Setup-Windows
+          path: |
+            dist/PortoPrime-Setup-4.4.8-x64.exe
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
+          compression-level: 0
+
+      - name: Disponibilizar pacote completo
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
           name: PortoPrime-4.4.8-Windows
           path: |
@@ -157,6 +170,7 @@ jobs:
             dist/PortoPrime-Setup-4.4.8-x64.exe
             dist/PortoPrime-Atualizacao-4.4.8-x64.exe
             dist/PortoPrime-4.4.8-Windows.zip
+            dist/SHA256SUMS.txt
           if-no-files-found: error
           compression-level: 0
 
@@ -168,12 +182,12 @@ jobs:
         run: |
           $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
           $tag = "v$version"
-
           $assets = @(
             "dist/PortoPrime-Portable-$version-x64.exe",
             "dist/PortoPrime-Setup-$version-x64.exe",
             "dist/PortoPrime-Atualizacao-$version-x64.exe",
-            "dist/PortoPrime-$version-Windows.zip"
+            "dist/PortoPrime-$version-Windows.zip",
+            "dist/SHA256SUMS.txt"
           )
 
           gh release view $tag --repo $env:GITHUB_REPOSITORY 2>$null
@@ -183,7 +197,7 @@ jobs:
           }
           else {
             Write-Host "Criando Release $tag..."
-            gh release create $tag $assets --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title "Porto Prime $version" --notes "Versao $version do Porto Prime para Windows. Arquivos: Portable, Instalador, Atualizador seguro e pacote ZIP."
+            gh release create $tag $assets --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title "Porto Prime $version" --notes "Versao $version do Porto Prime para Windows. Inclui Portable, Instalador, Atualizador seguro, ZIP e SHA256SUMS.txt."
           }
 
       - name: Resumo da compilacao
@@ -195,4 +209,3 @@ jobs:
           Write-Host "PORTO PRIME $version - BUILD CONCLUIDO"
           Write-Host "========================================"
           Write-Host "Release: https://github.com/$env:GITHUB_REPOSITORY/releases/tag/v$version"
-
