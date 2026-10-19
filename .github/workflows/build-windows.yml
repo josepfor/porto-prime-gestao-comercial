@@ -155,7 +155,7 @@ jobs:
         with:
           name: PortoPrime-Setup-Windows
           path: |
-            dist/PortoPrime-Setup-4.4.8-x64.exe
+            dist/PortoPrime-Setup-*-x64.exe
             dist/SHA256SUMS.txt
           if-no-files-found: error
           compression-level: 0
@@ -166,10 +166,10 @@ jobs:
         with:
           name: PortoPrime-4.4.8-Windows
           path: |
-            dist/PortoPrime-Portable-4.4.8-x64.exe
-            dist/PortoPrime-Setup-4.4.8-x64.exe
-            dist/PortoPrime-Atualizacao-4.4.8-x64.exe
-            dist/PortoPrime-4.4.8-Windows.zip
+            dist/PortoPrime-Portable-*-x64.exe
+            dist/PortoPrime-Setup-*-x64.exe
+            dist/PortoPrime-Atualizacao-*-x64.exe
+            dist/PortoPrime-*-Windows.zip
             dist/SHA256SUMS.txt
           if-no-files-found: error
           compression-level: 0
