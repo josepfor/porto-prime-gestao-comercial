@@ -124,3 +124,6 @@ ALTER TABLE sales ADD COLUMN IF NOT EXISTS idempotency_key TEXT;
 ALTER TABLE sales ADD COLUMN IF NOT EXISTS request_hash TEXT;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_sales_idempotency_key ON sales(idempotency_key) WHERE idempotency_key IS NOT NULL;
 INSERT INTO schema_migrations(version,description) VALUES(448,'Porto Prime 4.4.8 - idempotência e integridade de vendas') ON CONFLICT(version) DO NOTHING;
+
+-- Porto Prime: imagem única por produto.
+ALTER TABLE products ADD COLUMN IF NOT EXISTS image_data TEXT;
