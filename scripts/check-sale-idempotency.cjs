@@ -10,6 +10,7 @@ async function main() {
     [schema.includes('ALTER TABLE sales ADD COLUMN IF NOT EXISTS request_hash TEXT;'), 'request fingerprint migration exists'],
     [schema.includes('CREATE UNIQUE INDEX IF NOT EXISTS idx_sales_idempotency_key ON sales(idempotency_key) WHERE idempotency_key IS NOT NULL;'), 'partial unique index protects keyed requests'],
     [server.includes('function saleRequestFingerprint(req)'), 'server fingerprints sale payloads'],
+    [server.includes("SELECT pg_advisory_xact_lock(hashtextextended($1,0))"), 'same-key concurrent requests are serialized in the transaction'],
     [server.includes("SELECT * FROM sales WHERE idempotency_key=$1"), 'server checks for an existing request'],
     [server.includes('existing.request_hash!==requestHash'), 'same key cannot be reused for a different payload'],
     [server.includes('idempotent_replay:true'), 'server marks replayed results'],
