@@ -42,3 +42,100 @@
 @media(max-width:700px){.legacy-pdv>.legacy-shortcuts-top{grid-template-columns:repeat(3,minmax(0,1fr))!important}.legacy-pdv>.legacy-shortcuts-top button{height:50px!important}}
 .dark-ui .legacy-pdv>.pdv-customer-top{background:#172033!important;border-color:#344054!important}
 .dark-ui .legacy-pdv>.pdv-customer-top label{color:#cbd5e1!important}
+
+
+/* PDV — proposta minimalista azul fosco */
+.legacy-pdv{gap:10px!important;color:#263447!important}
+.legacy-pdv .legacy-cash{
+ background:#e4eaf1!important;background-image:none!important;color:#263447!important;
+ border:1px solid #d6dfe9!important;border-radius:12px!important;box-shadow:none!important;
+ min-height:54px!important;padding:10px 16px!important
+}
+.legacy-pdv .legacy-cash span,.legacy-pdv .legacy-cash b,.legacy-pdv .legacy-cash strong{color:#263447!important;text-shadow:none!important}
+.legacy-pdv .legacy-cash b{font-size:19px!important;font-weight:700!important}
+.legacy-pdv .legacy-cash strong{font-size:15px!important;font-weight:650!important}
+.legacy-pdv>.legacy-shortcuts-top{
+ background:#e8edf3!important;background-image:none!important;border:1px solid #d8e0e9!important;
+ border-radius:12px!important;padding:8px!important;gap:7px!important;box-shadow:none!important
+}
+.legacy-pdv>.legacy-shortcuts-top button{
+ background:#f8fafc!important;background-image:none!important;color:#34465b!important;
+ border:1px solid #d5dee8!important;border-radius:9px!important;box-shadow:none!important;
+ text-shadow:none!important;height:54px!important;padding:5px 7px!important
+}
+.legacy-pdv>.legacy-shortcuts-top button:hover,
+.legacy-pdv>.legacy-shortcuts-top button:focus-visible{
+ background:#e2eaf3!important;border-color:#9aafc6!important;outline:none!important
+}
+.legacy-pdv>.legacy-shortcuts-top button span{color:#385779!important;font-size:19px!important}
+.legacy-pdv>.legacy-shortcuts-top button b{color:#263447!important;font-weight:700!important;font-size:11px!important}
+.legacy-pdv>.legacy-shortcuts-top button small{color:#718096!important;font-weight:600!important;font-size:10px!important}
+.legacy-pdv>.pdv-customer-top{
+ background:#fff!important;border:1px solid #dce3eb!important;border-radius:12px!important;
+ padding:12px 14px!important;box-shadow:none!important
+}
+.legacy-pdv>.pdv-customer-top label{color:#52657c!important;font-weight:650!important}
+.legacy-pdv>.pdv-customer-top select{background:#fbfcfd!important;border:1px solid #dce3eb!important;color:#263447!important;font-weight:600!important}
+.legacy-pdv>.pdv-customer-top small{color:#718096!important}
+.legacy-pdv .legacy-searchbar{
+ background:#e5ebf2!important;background-image:none!important;border:1px solid #d6dfe9!important;
+ border-radius:12px!important;box-shadow:none!important;padding:12px!important
+}
+.legacy-pdv .legacy-searchbar label,.legacy-pdv .legacy-searchbar b,.legacy-pdv .legacy-searchbar strong{
+ color:#52657c!important;text-shadow:none!important
+}
+.legacy-pdv .legacy-searchbar input,.legacy-pdv input#pdvSearch,.legacy-pdv .legacy-searchbar .legacy-search-input{
+ background:#fff!important;color:#263447!important;border:1px solid #cbd6e2!important;
+ border-radius:9px!important;box-shadow:none!important;text-shadow:none!important
+}
+.legacy-pdv .legacy-searchbar input:focus,.legacy-pdv input#pdvSearch:focus{
+ border-color:#7890aa!important;outline:2px solid rgba(56,87,121,.12)!important;box-shadow:none!important
+}
+.legacy-pdv .legacy-main,.legacy-pdv .legacy-client-row,.legacy-pdv .legacy-paybox,
+.legacy-pdv .legacy-actions,.legacy-pdv .legacy-status{
+ background:#fff!important;background-image:none!important;color:#263447!important;
+ border:1px solid #dce3eb!important;border-radius:12px!important;box-shadow:none!important
+}
+.legacy-pdv .legacy-actions{padding:12px!important}
+.legacy-pdv .legacy-subtotal{
+ background:#f2f5f8!important;background-image:none!important;border:1px solid #dce3eb!important;
+ border-radius:10px!important;color:#263447!important;box-shadow:none!important;min-height:76px!important
+}
+.legacy-pdv .legacy-subtotal:before{filter:grayscale(1)!important;opacity:.6!important}
+.legacy-pdv .legacy-subtotal span{color:#65758a!important;border-color:#d1dae4!important}
+.legacy-pdv .legacy-subtotal strong{color:#263447!important;font-size:38px!important;font-weight:750!important;text-shadow:none!important}
+.legacy-pdv input,.legacy-pdv select,.legacy-pdv textarea{
+ background:#fbfcfd!important;color:#263447!important;border:1px solid #dce3eb!important;
+ border-radius:8px!important;box-shadow:none!important;text-shadow:none!important
+}
+.legacy-pdv input:focus,.legacy-pdv select:focus,.legacy-pdv textarea:focus{
+ border-color:#7890aa!important;outline:2px solid rgba(56,87,121,.12)!important;box-shadow:none!important
+}
+.legacy-pdv button:not(.legacy-shortcuts-top button){
+ text-shadow:none!important;box-shadow:none!important;filter:none!important
+}
+.legacy-pdv .primary,.legacy-pdv button.primary,.legacy-pdv .legacy-finish,.legacy-pdv #pdvFinish{
+ background:#385779!important;background-image:none!important;color:#fff!important;
+ border:1px solid #385779!important;border-radius:9px!important;box-shadow:none!important
+}
+.legacy-pdv .primary:hover,.legacy-pdv button.primary:hover,.legacy-pdv #pdvFinish:hover{background:#2c4663!important}
+.legacy-pdv .secondary,.legacy-pdv button.secondary{
+ background:#fff!important;background-image:none!important;color:#385779!important;
+ border:1px solid #d5dee8!important;border-radius:9px!important;box-shadow:none!important
+}
+.legacy-pdv .legacy-items,.legacy-pdv table{border-color:#dce3eb!important}
+.legacy-pdv th{background:#f2f5f8!important;color:#52657c!important;text-shadow:none!important}
+.legacy-pdv td{color:#263447!important;border-color:#e5eaf0!important}
+.legacy-pdv .legacy-status,.legacy-pdv .legacy-paybox{padding:12px!important}
+.dark-ui .legacy-pdv .legacy-cash,.dark-ui .legacy-pdv>.legacy-shortcuts-top,
+.dark-ui .legacy-pdv .legacy-searchbar,.dark-ui .legacy-pdv .legacy-subtotal{
+ background:#202b39!important;color:#e0e7ef!important;border-color:#354354!important
+}
+.dark-ui .legacy-pdv .legacy-cash span,.dark-ui .legacy-pdv .legacy-cash b,.dark-ui .legacy-pdv .legacy-cash strong,
+.dark-ui .legacy-pdv .legacy-searchbar label,.dark-ui .legacy-pdv .legacy-searchbar b,
+.dark-ui .legacy-pdv .legacy-subtotal strong,.dark-ui .legacy-pdv .legacy-subtotal span{color:#e0e7ef!important}
+.dark-ui .legacy-pdv>.legacy-shortcuts-top button,.dark-ui .legacy-pdv>.pdv-customer-top,
+.dark-ui .legacy-pdv .legacy-main,.dark-ui .legacy-pdv .legacy-client-row,.dark-ui .legacy-pdv .legacy-paybox,
+.dark-ui .legacy-pdv .legacy-actions{background:#202b39!important;color:#e0e7ef!important;border-color:#354354!important}
+.dark-ui .legacy-pdv input,.dark-ui .legacy-pdv select,.dark-ui .legacy-pdv textarea{background:#182230!important;color:#e0e7ef!important;border-color:#354354!important}
+@media(max-width:700px){.legacy-pdv>.legacy-shortcuts-top{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
