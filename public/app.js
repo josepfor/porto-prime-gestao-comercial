@@ -812,6 +812,35 @@ licenseStatus().then(async ok=>{
   if(token)start().catch(()=>logout());
 }).catch(e=>showActivation({error:'Não foi possível verificar a licença: '+e.message}));
 
+
+/* Navegação global por Enter: avança entre campos sem interferir em atalhos e fluxos especiais. */
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Enter'||e.defaultPrevented||e.isComposing||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey)return;
+  const current=e.target;
+  if(!(current instanceof HTMLElement))return;
+  if(!current.matches('input,select,textarea'))return;
+  if(current.matches('textarea,[type="search"],[type="file"],[type="checkbox"],[type="radio"],[type="button"],[type="submit"],[type="reset"],[type="hidden"],[readonly],[disabled]'))return;
+  if(current.closest('[role="combobox"],[contenteditable="true"]'))return;
+  // Campos com tratamento próprio de Enter (PDV, busca, atalhos e seletores) mantêm seu comportamento.
+  if(current.hasAttribute('onkeydown'))return;
+  const scope=current.closest('.modalinner,form,.panel')||document;
+  const selector='input:not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([readonly]),select:not([disabled]),textarea:not([readonly])';
+  const fields=Array.from(scope.querySelectorAll(selector)).filter(el=>{
+    if(el.disabled||el.getAttribute('aria-hidden')==='true')return false;
+    const style=getComputedStyle(el);
+    return style.display!=='none'&&style.visibility!=='hidden'&&el.getClientRects().length>0;
+  });
+  const index=fields.indexOf(current);
+  if(index<0)return;
+  e.preventDefault();
+  const next=fields[index+1];
+  if(next){next.focus();if(next instanceof HTMLInputElement&&['text','number','search','tel','url','email'].includes(next.type))next.select?.();}
+  else {
+    const submit=scope.querySelector('button[type="submit"],input[type="submit"],button.primary');
+    if(submit&&!submit.disabled)submit.focus();
+  }
+},false);
+
 // Porto Prime 4.1.12 — tabela de preços do catálogo.
 let priceTableProducts=[],priceTableMode='retail';
 function pricePromotion(p,today=new Date().toISOString().slice(0,10)){
