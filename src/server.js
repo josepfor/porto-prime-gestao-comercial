@@ -121,8 +121,28 @@ app.get('/api/cash/history',auth,roles('Administrador','Gerente','Caixa'),async(
 app.get('/api/cash/report/:id',auth,roles('Administrador','Gerente','Caixa'),async(req,res)=>{let r=await cashReport(+req.params.id);if(!r)return res.status(404).json({error:'Caixa não encontrado.'});res.json(r)});
 
 async function currentSettings(c=pool){let q=await c.query('SELECT data FROM app_settings WHERE id=1');return q.rows[0]?.data||{}}
+function saleRequestFingerprint(req){
+ const body=req.body||{};
+ const items=Array.isArray(body.items)?body.items.map(i=>({product_id:String(i?.product_id??''),qty:Number(i?.qty),unit_price:i?.unit_price===undefined||i?.unit_price===null||i?.unit_price===''?null:Number(i.unit_price)})):[];
+ const payments=Array.isArray(body.payments)?body.payments.map(p=>({method:String(p?.method||''),amount:Number(p?.amount)})):[];
+ return crypto.createHash('sha256').update(JSON.stringify({user_id:req.user?.id??null,customer_id:body.customer_id??null,quote_id:body.quote_id??null,discount_percent:body.discount_percent??null,discount:body.discount??null,payment_method:body.payment_method??null,items,payments})).digest('hex');
+}
+function safeSaleResponse(sale){const {idempotency_key,request_hash,...safe}=sale;return safe;}
 async function finalizeSaleCore(req){
+ const idempotencyKey=String(req.body?.request_id||'').trim();
+ if(idempotencyKey&&!/^[A-Za-z0-9_-]{16,100}$/.test(idempotencyKey))throw Object.assign(Error('Identificador da tentativa de venda inválido.'),{statusCode:400});
+ const requestHash=idempotencyKey?saleRequestFingerprint(req):null;
  return tx(async c=>{
+  if(idempotencyKey){
+   // Serialize concurrent submissions with the same request key before lookup.
+   // The lock is transaction-scoped and released automatically on commit/rollback.
+   await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[idempotencyKey]);
+   const existing=(await c.query('SELECT * FROM sales WHERE idempotency_key=$1',[idempotencyKey])).rows[0];
+   if(existing){
+    if(existing.request_hash!==requestHash)throw Object.assign(Error('Esta tentativa já foi registrada com dados diferentes. Confira a lista de vendas antes de iniciar outra tentativa.'),{statusCode:409});
+    return {...existing,idempotent_replay:true};
+   }
+  }
   let cfg=await currentSettings(c),cs=(await c.query("SELECT * FROM cash_sessions WHERE status='OPEN' ORDER BY id DESC LIMIT 1 FOR UPDATE")).rows[0];
   if(!cs&&cfg.sales?.require_open_cash!==false)throw Error('Abra o caixa antes de vender.');if(!cs)cs={id:null};
   let items=req.body.items||[];if(!items.length)throw Error('Carrinho vazio.');
@@ -154,7 +174,7 @@ async function finalizeSaleCore(req){
   let discount=subtotal*discountPct/100,total=Math.max(0,subtotal-discount),pays=req.body.payments||[];
   if(!pays.length)pays=[{method:req.body.payment_method||'Dinheiro',amount:total}];
   let paid=pays.reduce((a,x)=>a+(+x.amount||0),0);if(Math.abs(paid-total)>.01)throw Error('A soma dos pagamentos deve ser igual ao total da venda.');
-  let sale=(await c.query('INSERT INTO sales(customer_id,user_id,seller_id,cash_session_id,payment_method,subtotal,total,discount,discount_percent,cmv) VALUES($1,$2,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *',[req.body.customer_id||null,req.user.id,cs.id,pays.length>1?'Misto':pays[0].method,subtotal,total,discount,discountPct,cmv])).rows[0];
+  let sale=(await c.query('INSERT INTO sales(customer_id,user_id,seller_id,cash_session_id,payment_method,subtotal,total,discount,discount_percent,cmv,idempotency_key,request_hash) VALUES($1,$2,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *',[req.body.customer_id||null,req.user.id,cs.id,pays.length>1?'Misto':pays[0].method,subtotal,total,discount,discountPct,cmv,idempotencyKey||null,requestHash])).rows[0];
   for(let i of checked){let before=+i.p.stock,after=before-i.qty;await c.query('INSERT INTO sale_items(sale_id,product_id,description,qty,unit_price,cost,price_type) VALUES($1,$2,$3,$4,$5,$6,$7)',[sale.id,i.p.id,i.p.name,i.qty,i.price,i.p.cost,i.type]);await c.query('UPDATE products SET stock=$1 WHERE id=$2',[after,i.p.id]);await c.query("INSERT INTO stock_movements(product_id,user_id,kind,qty,balance_before,balance_after,reference_type,reference_id) VALUES($1,$2,'VENDA',$3,$4,$5,'SALE',$6)",[i.p.id,req.user.id,-i.qty,before,after,sale.id])}
   for(let p of pays){let method=p.method,amount=+p.amount;if(!Number.isFinite(amount)||amount<0)throw Error('Valor de pagamento inválido.');await c.query('INSERT INTO sale_payments(sale_id,method,amount) VALUES($1,$2,$3)',[sale.id,method,amount]);if(method==='Crediário')await c.query("INSERT INTO financial_entries(kind,description,amount,status,reference_type,reference_id) VALUES('RECEBER',$1,$2,'PENDENTE','SALE',$3)",['Crediário venda #'+sale.id,amount,sale.id]);else if(method==='Dinheiro'&&cs.id)await c.query("INSERT INTO cash_movements(session_id,user_id,kind,description,amount) VALUES($1,$2,'VENDA',$3,$4)",[cs.id,req.user.id,'Venda #'+sale.id+' • Dinheiro',amount])}
   if(req.body.quote_id){let q=(await c.query('SELECT * FROM quotes WHERE id=$1 FOR UPDATE',[req.body.quote_id])).rows[0];if(!q||q.status!=='ABERTO')throw Error('Orçamento não está mais disponível para conversão.');await c.query("UPDATE quotes SET status='CONVERTIDO',converted_sale_id=$1 WHERE id=$2",[sale.id,q.id]);await audit(c,req.user.id,'Orçamento convertido no PDV','#'+q.id+' -> venda #'+sale.id)}
@@ -162,9 +182,18 @@ async function finalizeSaleCore(req){
   await audit(c,req.user.id,'Venda finalizada',detail);return sale;
  });
 }
-async function saleRoute(req,res){try{res.status(201).json(await finalizeSaleCore(req))}catch(e){res.status(400).json({error:e.message})}}
+async function saleRoute(req,res){
+ try{const sale=await finalizeSaleCore(req),replay=!!sale.idempotent_replay;res.status(replay?200:201).json({...safeSaleResponse(sale),...(replay?{idempotent_replay:true}:{})})}
+ catch(e){
+  const key=String(req.body?.request_id||'').trim();
+  if(key&&/^[A-Za-z0-9_-]{16,100}$/.test(key)){
+   try{const existing=(await pool.query('SELECT * FROM sales WHERE idempotency_key=$1',[key])).rows[0];if(existing){if(existing.request_hash!==saleRequestFingerprint(req))return res.status(409).json({error:'Esta tentativa já foi registrada com dados diferentes. Confira a lista de vendas antes de iniciar outra tentativa.'});return res.status(200).json({...safeSaleResponse(existing),idempotent_replay:true})}}catch(recoveryError){console.error('Falha ao recuperar resultado de venda idempotente:',recoveryError)}
+  }
+  res.status(e.statusCode||400).json({error:e.message||'Não foi possível finalizar a venda.'})
+ }
+}
 app.post('/api/sales',auth,roles('Administrador','Gerente','Vendedor','Caixa'),saleRoute);
-app.get('/api/sales',auth,async(req,res)=>res.json((await pool.query('SELECT s.*,u.name seller,c.name customer FROM sales s JOIN users u ON u.id=s.user_id LEFT JOIN customers c ON c.id=s.customer_id ORDER BY s.id DESC LIMIT 200')).rows));
+app.get('/api/sales',auth,async(req,res)=>res.json((await pool.query('SELECT s.id,s.customer_id,s.user_id,s.seller_id,s.cash_session_id,s.status,s.payment_method,s.subtotal,s.total,s.discount,s.discount_percent,s.cmv,s.created_at,s.cancelled_at,s.cancelled_by,s.cancel_reason,u.name seller,c.name customer FROM sales s JOIN users u ON u.id=s.user_id LEFT JOIN customers c ON c.id=s.customer_id ORDER BY s.id DESC LIMIT 200')).rows));
 app.get('/api/stock/movements',auth,async(req,res)=>res.json((await pool.query('SELECT m.*,p.name product,u.name user_name FROM stock_movements m JOIN products p ON p.id=m.product_id LEFT JOIN users u ON u.id=m.user_id ORDER BY m.id DESC LIMIT 300')).rows));
 app.get('/api/audit',auth,roles('Administrador','Gerente'),async(req,res)=>res.json((await pool.query('SELECT a.*,u.name user_name FROM audit_logs a LEFT JOIN users u ON u.id=a.user_id ORDER BY a.id DESC LIMIT 300')).rows));
 // ConstruGest 3.2.9 - Financeiro Profissional
