@@ -409,3 +409,96 @@ input,select,textarea{border-color:var(--line)}
 input:focus,select:focus,textarea:focus{outline:2px solid rgba(41,74,112,.15);border-color:var(--primary)}
 button{transition:background-color .15s ease,border-color .15s ease}
 .card,.panel,.modal,.stat-card,.dashboard-card{box-shadow:var(--shadow)}
+
+
+/* Porto Prime — refinamento visual global: azul fosco, sem brilho ou gradientes */
+:root{
+ --bg:#eef1f5;--panel:#fff;--text:#263447;--muted:#718096;--line:#dce3eb;
+ --primary:#385779;--primary2:#2c4663;--soft:#e9eef4;--nav:#1c2d42;--nav2:#263b53;
+ --green:#3d7968;--red:#a95159;--amber:#98733e;--shadow:0 2px 8px rgba(31,48,68,.055);
+}
+html,body{background:var(--bg)!important;color:var(--text)!important}
+body{font-family:"Segoe UI",Inter,Arial,sans-serif!important;letter-spacing:0!important}
+h1,h2,h3,h4,h5,h6,strong,b,button,label,th{ text-shadow:none!important;filter:none!important}
+button,.btn,.primary,.secondary,.danger-btn,.success-btn,.warning-btn,.login-btn,
+[role=button],input,select,textarea{ text-shadow:none!important;filter:none!important;box-shadow:none!important}
+button,.btn,.primary,.secondary,.danger-btn,.success-btn,.warning-btn,[role=button]{
+ background-image:none!important;transition:background-color .14s ease,border-color .14s ease!important
+}
+#shell aside,aside,.sidebar,.app-sidebar,.nav-sidebar{background:var(--nav)!important;background-image:none!important;box-shadow:none!important}
+#shell aside nav button,#shell aside nav a,aside nav button,aside nav a,.sidebar nav a,.sidebar nav button{
+ background-image:none!important;box-shadow:none!important;text-shadow:none!important
+}
+#shell aside nav button.active,#shell aside nav a.active,aside nav button.active,aside nav a.active,
+.sidebar nav .active,.sidebar .active{
+ background:#314c6b!important;color:#fff!important;border-color:transparent!important
+}
+#shell main,main,#app,.content,.main-content{background:var(--bg)!important}
+header,.topbar,.app-header{background:#fff!important;background-image:none!important;border-bottom:1px solid var(--line)!important;box-shadow:none!important}
+.card,.panel,.modal,.modal-content,.stat-card,.dashboard-card,.table-wrap,.form-card,.settings-card,
+.ger-prime .card,.alert-card,.widget,.report-card{
+ background:var(--panel)!important;background-image:none!important;color:var(--text)!important;
+ border:1px solid var(--line)!important;box-shadow:var(--shadow)!important;border-radius:13px!important
+}
+h1,h2,h3,h4,.page-head h2,.section-title{color:var(--text)!important}
+p,small,.muted,.subtitle{ text-shadow:none!important}
+.primary,.login-btn,.hero-mark,.logo,.version-chip,.user-chip{
+ background:var(--primary)!important;background-image:none!important;color:#fff!important;border-color:transparent!important
+}
+.primary:hover,.login-btn:hover,.primary:focus-visible{background:var(--primary2)!important}
+.secondary,.logout-btn,.iconbtn{background:#fff!important;color:var(--primary)!important;border:1px solid var(--line)!important}
+.secondary:hover,.logout-btn:hover,.iconbtn:hover{background:var(--soft)!important}
+input,select,textarea,.search input{
+ background:#fbfcfd!important;color:var(--text)!important;border:1px solid var(--line)!important;
+ border-radius:8px!important;box-shadow:none!important
+}
+input:focus,select:focus,textarea:focus{outline:2px solid #38577920!important;border-color:#7890aa!important}
+a{ text-shadow:none!important}
+a:not(.primary):not(.btn){color:#385779}
+.badge,.chip,.pill,.tag{box-shadow:none!important;text-shadow:none!important}
+.success,.text-success,.green,.positive{color:#3d7968!important}
+.danger,.text-danger,.red,.negative{color:#a95159!important}
+.warning,.text-warning,.orange{color:#98733e!important}
+.alert,.notice,.toast,.status-banner{box-shadow:none!important;text-shadow:none!important}
+.progress,.progress-bar,.bar,.chart-bar{box-shadow:none!important}
+.login-wrap{background:#e9edf2!important;background-image:none!important}
+.login-shell{box-shadow:0 8px 24px rgba(31,48,68,.10)!important;border:1px solid #dce3eb!important}
+.login-hero,.commercial-hero,.login-card{background-image:none!important}
+.login-hero,.commercial-hero{background:#20364e!important;color:#fff!important}
+.login-card,.commercial-card{background:#fff!important;color:var(--text)!important}
+.hero-points span,.commercial-modules span{box-shadow:none!important}
+.hero-points span{background:#2a4057!important;border-color:#526478!important}
+#app .hero,#app [class*="-hero"],#app .dashboard-hero,#app .welcome-banner,
+#app .stock-intel-hero,#app .seller-goal-hero,#app .ger-prime-hero{
+ background:#e4eaf1!important;background-image:none!important;color:#263447!important;
+ border:1px solid #d6dfe9!important;box-shadow:none!important;border-radius:14px!important
+}
+#app .hero p,#app [class*="-hero"] p,#app .dashboard-hero p,#app .welcome-banner p{color:#65758a!important}
+#app .hero h1,#app .hero h2,#app [class*="-hero"] h1,#app [class*="-hero"] h2{color:#263447!important}
+#app .hero .primary,#app [class*="-hero"] .primary{background:#385779!important;color:#fff!important}
+.ger-kpis-prime .card,.ger-kpis-prime .card.blue,.ger-kpis-prime .card.green,
+.ger-kpis-prime .card.orange,.ger-kpis-prime .card.purple,.ger-kpis-prime .card.red,
+.ger-kpis-prime .card.slate,.ger-kpis-prime .card.teal{
+ background:#f7f9fb!important;background-image:none!important;color:var(--text)!important;
+ border:1px solid var(--line)!important
+}
+.ger-kpis-prime .card small,.ger-kpis-prime .card span,.ger-kpis-prime .card strong{color:var(--text)!important}
+.ger-month-bars i{background:#7890aa!important}
+.ger-tabs button.active,.ger-presets .active{background:#385779!important;border-color:#385779!important;color:#fff!important}
+.stock-intel-hero,.seller-goal-hero{background:#e4eaf1!important;color:var(--text)!important;box-shadow:none!important}
+.stock-intel-hero p,.seller-goal-hero p{color:#65758a!important}
+.stock-intel-period,.seller-month-box{background:#f7f9fb!important;border:1px solid var(--line)!important}
+.legacy-pdv>.legacy-shortcuts-top,.legacy-pdv .legacy-actions,.legacy-pdv .legacy-paybox{
+ background:#e6ebf1!important;background-image:none!important;color:var(--text)!important;border:1px solid var(--line)!important;box-shadow:none!important
+}
+.legacy-pdv>.legacy-shortcuts-top button{background:#f8fafc!important;color:var(--text)!important;border:1px solid var(--line)!important}
+.legacy-pdv>.legacy-shortcuts-top button small{color:var(--muted)!important}
+.legacy-pdv .legacy-paybox,.legacy-pdv .legacy-paybox *{text-shadow:none!important}
+.legacy-pdv .legacy-subtotal{color:var(--text)!important}
+.dark-ui{--bg:#171f2b;--panel:#202b39;--text:#e0e7ef;--muted:#a2afbf;--line:#354354;--primary:#58799d;--primary2:#456584;--soft:#29394b;--nav:#131e2b;--nav2:#1c2d40;--shadow:none}
+.dark-ui html,.dark-ui body,.dark-ui #shell main,.dark-ui main,.dark-ui #app,.dark-ui .content,.dark-ui .main-content{background:var(--bg)!important;color:var(--text)!important}
+.dark-ui .card,.dark-ui .panel,.dark-ui .modal,.dark-ui .modal-content,.dark-ui .stat-card,.dark-ui .dashboard-card,
+.dark-ui .table-wrap,.dark-ui .form-card,.dark-ui .settings-card{background:var(--panel)!important;color:var(--text)!important;border-color:var(--line)!important}
+.dark-ui header,.dark-ui .topbar,.dark-ui .app-header{background:#202b39!important;border-color:var(--line)!important}
+.dark-ui input,.dark-ui select,.dark-ui textarea,.dark-ui .search input{background:#182230!important;color:var(--text)!important;border-color:var(--line)!important}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
