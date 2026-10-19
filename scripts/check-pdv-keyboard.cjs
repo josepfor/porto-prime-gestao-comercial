@@ -36,7 +36,7 @@ async function key(stage,value){if(value!=null)nodes[{qty:'pdvQty',unit:'pdvSele
  assert.match(styles,/\.legacy-pdv>\.legacy-shortcuts-top,\.legacy-pdv>\.pdv-customer-top\{order:-98!important\}/);
  assert.match(fs.readFileSync('public/pdv-322.css','utf8'),/\.legacy-searchbar\{order:-98!important\}/);
  const page=fs.readFileSync('public/index.html','utf8');
- assert(page.includes('style.css?v=4.4.7'));
+ assert(page.includes('style.css?v=tema-azul-fosco-1'));
  assert(page.includes('pdv-4112.css?v=4.4.7'));
  const pdvOverride=fs.readFileSync('public/pdv-4112.css','utf8');
  assert.match(pdvOverride,/\.legacy-pdv>\.legacy-shortcuts-top,\s*\.legacy-pdv>\.pdv-customer-top\{order:-98!important\}/);
