@@ -502,3 +502,8 @@ a:not(.primary):not(.btn){color:#385779}
 .dark-ui header,.dark-ui .topbar,.dark-ui .app-header{background:#202b39!important;border-color:var(--line)!important}
 .dark-ui input,.dark-ui select,.dark-ui textarea,.dark-ui .search input{background:#182230!important;color:var(--text)!important;border-color:var(--line)!important}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+
+
+/* Login: restaurar contraste do título "Gestão inteligente" */
+.commercial-copy h1{color:#e7edf5!important;text-shadow:none!important;filter:none!important}
+.commercial-copy h1 b{color:#3991f5!important;text-shadow:none!important;filter:none!important}
