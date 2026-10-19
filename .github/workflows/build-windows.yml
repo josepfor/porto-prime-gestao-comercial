@@ -164,7 +164,7 @@ jobs:
         uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
-          name: PortoPrime-4.4.8-Windows
+          name: PortoPrime-4.4.9-Windows
           path: |
             dist/PortoPrime-Portable-*-x64.exe
             dist/PortoPrime-Setup-*-x64.exe
