@@ -372,3 +372,40 @@ main{min-width:0}header{min-height:82px;background:#ffffffdd;backdrop-filter:blu
 @media(max-width:900px){.seller-goal-hero{align-items:flex-start;flex-direction:column}.seller-month-box{width:100%}}
 
 .password-recovery-box{margin-top:12px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#f8fafc}.password-recovery-box.hidden{display:none}.password-recovery-box .alert{margin-top:0}.login-recovery-btn{margin-top:10px}.dark-ui .password-recovery-box{background:#111827}
+
+
+/* Porto Prime — tema azul fosco minimalista (proposta 4.4.9) */
+:root{
+  --bg:#f1f3f6;
+  --panel:#ffffff;
+  --text:#202c3b;
+  --muted:#687588;
+  --line:#dfe4eb;
+  --primary:#294a70;
+  --primary2:#203b5b;
+  --soft:#e8eef5;
+  --green:#278064;
+  --red:#b94b50;
+  --amber:#a96f22;
+  --nav:#172b46;
+  --nav2:#203853;
+  --shadow:0 2px 10px rgba(24,42,64,.06);
+}
+html,body{background:var(--bg);color:var(--text)}
+body{font-family:Inter,"Segoe UI",Arial,sans-serif;letter-spacing:0}
+button,input,select,textarea{font-family:Inter,"Segoe UI",Arial,sans-serif;letter-spacing:0}
+button,.primary,.secondary,.login-btn{box-shadow:none!important;text-shadow:none!important;filter:none}
+.primary,.login-btn,.hero-mark,.logo{background:var(--primary)!important;background-image:none!important;color:#fff!important;box-shadow:none!important}
+.primary:hover,.login-btn:hover{background:var(--primary2)!important}
+.secondary{background:#fff!important;color:var(--primary)!important;border:1px solid var(--line)!important}
+.login-wrap{background:linear-gradient(135deg,#172b46,#243e5d)!important}
+.login-shell{border-radius:16px;box-shadow:0 12px 36px rgba(14,28,46,.14)}
+.login-hero{background:#203853!important;background-image:none!important}
+.hero-mark,.logo{border-radius:12px}
+.eyebrow{color:#829bb8}
+.login-hero p{color:#d9e1eb}
+.hero-points span{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18)}
+input,select,textarea{border-color:var(--line)}
+input:focus,select:focus,textarea:focus{outline:2px solid rgba(41,74,112,.15);border-color:var(--primary)}
+button{transition:background-color .15s ease,border-color .15s ease}
+.card,.panel,.modal,.stat-card,.dashboard-card{box-shadow:var(--shadow)}
