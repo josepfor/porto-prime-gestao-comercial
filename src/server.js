@@ -134,6 +134,9 @@ async function finalizeSaleCore(req){
  const requestHash=idempotencyKey?saleRequestFingerprint(req):null;
  return tx(async c=>{
   if(idempotencyKey){
+   // Serialize concurrent submissions with the same request key before lookup.
+   // The lock is transaction-scoped and released automatically on commit/rollback.
+   await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[idempotencyKey]);
    const existing=(await c.query('SELECT * FROM sales WHERE idempotency_key=$1',[idempotencyKey])).rows[0];
    if(existing){
     if(existing.request_hash!==requestHash)throw Object.assign(Error('Esta tentativa já foi registrada com dados diferentes. Confira a lista de vendas antes de iniciar outra tentativa.'),{statusCode:409});
