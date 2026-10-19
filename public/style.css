@@ -507,3 +507,6 @@ a:not(.primary):not(.btn){color:#385779}
 /* Login: restaurar contraste do título "Gestão inteligente" */
 .commercial-copy h1{color:#e7edf5!important;text-shadow:none!important;filter:none!important}
 .commercial-copy h1 b{color:#3991f5!important;text-shadow:none!important;filter:none!important}
+
+/* Imagem única no cadastro de produto — tema minimalista */
+.product-image-area{grid-column:1/-1;border:1px solid var(--line,#d8e1ec);border-radius:12px;padding:14px;background:var(--panel-soft,#f8fafc);margin:2px 0 8px}.product-image-controls{display:flex;align-items:center;gap:16px;flex-wrap:wrap}.product-image-preview{width:124px;height:112px;border:1px dashed #b9c8d9;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#64748b;font-size:12px}.product-image-preview img{width:100%;height:100%;object-fit:contain}.product-image-actions{display:flex;flex-direction:column;align-items:flex-start;gap:8px}.product-image-actions small{font-size:11px}
