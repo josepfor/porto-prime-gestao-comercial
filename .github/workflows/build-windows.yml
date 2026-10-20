@@ -154,7 +154,7 @@ jobs:
         continue-on-error: true
         with:
           name: PortoPrime-Setup-Windows
-          path: dist/PortoPrime-Setup-${{ github.ref == 'refs/heads/main' && '4.4.7' || '4.4.7' }}-x64.exe
+          path: dist/PortoPrime-Setup-*-x64.exe
           if-no-files-found: warn
           compression-level: 0
           retention-days: 1
