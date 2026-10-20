@@ -166,9 +166,6 @@ jobs:
         with:
           name: PortoPrime-4.4.9-Windows
           path: |
-            dist/PortoPrime-Portable-*-x64.exe
-            dist/PortoPrime-Setup-*-x64.exe
-            dist/PortoPrime-Atualizacao-*-x64.exe
             dist/PortoPrime-*-Windows.zip
             dist/SHA256SUMS.txt
           if-no-files-found: error
