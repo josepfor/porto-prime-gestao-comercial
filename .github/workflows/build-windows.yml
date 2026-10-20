@@ -146,18 +146,18 @@ jobs:
 
           Write-Host "OK: $zip - $sizeMB MB"
 
-      - name: Disponibilizar arquivos para download
+      # O instalador separado é apenas um artefato temporário de apoio.
+      # Os quatro arquivos finais continuam sendo anexados à Release abaixo.
+      # Retenção curta e apenas um EXE reduzem o consumo da cota do Actions.
+      - name: Disponibilizar instalador para teste
         uses: actions/upload-artifact@v4
-        continue-on-error: true # A cota de artefatos temporários não deve bloquear a publicação da Release
+        continue-on-error: true
         with:
-          name: PortoPrime-4.4.7-Windows
-          path: |
-            dist/PortoPrime-Portable-4.4.7-x64.exe
-            dist/PortoPrime-Setup-4.4.7-x64.exe
-            dist/PortoPrime-Atualizacao-4.4.7-x64.exe
-            dist/PortoPrime-4.4.7-Windows.zip
-          if-no-files-found: error
+          name: PortoPrime-Setup-Windows
+          path: dist/PortoPrime-Setup-${{ github.ref == 'refs/heads/main' && '4.4.7' || '4.4.7' }}-x64.exe
+          if-no-files-found: warn
           compression-level: 0
+          retention-days: 1
 
       - name: Publicar Release do Porto Prime
         if: github.ref == 'refs/heads/main'
