@@ -152,6 +152,7 @@ jobs:
       # o ZIP agregado de ~574 MB só para obter o instalador.
       - name: Disponibilizar instalador separado
         uses: actions/upload-artifact@v4
+        continue-on-error: true # A cota de artefatos temporários não deve bloquear a publicação da Release
         with:
           name: PortoPrime-Setup-Windows
           path: |
