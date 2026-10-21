@@ -813,6 +813,27 @@ licenseStatus().then(async ok=>{
 }).catch(e=>showActivation({error:'Não foi possível verificar a licença: '+e.message}));
 
 
+/* Esc volta ao campo anterior no formulário/painel atual, sem substituir ações específicas. */
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Escape'||e.defaultPrevented||e.isComposing||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey)return;
+  const current=e.target;
+  if(!(current instanceof HTMLElement)||!current.matches('input,select,textarea'))return;
+  if(current.hasAttribute('onkeydown')||current.closest('[role="combobox"],[contenteditable="true"]'))return;
+  const scope=current.closest('.modalinner,form,.panel')||document;
+  const selector='input:not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([readonly]):not([disabled]),select:not([disabled]),textarea:not([readonly]):not([disabled])';
+  const fields=Array.from(scope.querySelectorAll(selector)).filter(el=>{
+    if(el.getAttribute('aria-hidden')==='true')return false;
+    const style=getComputedStyle(el);
+    return style.display!=='none'&&style.visibility!=='hidden'&&el.getClientRects().length>0;
+  });
+  const index=fields.indexOf(current);
+  if(index<=0)return;
+  e.preventDefault();
+  const previous=fields[index-1];
+  previous.focus();
+  if(previous instanceof HTMLInputElement&&['text','number','tel','url','email'].includes(previous.type))previous.select?.();
+},false);
+
 /* Navegação global por Enter: avança entre campos sem interferir em atalhos e fluxos especiais. */
 document.addEventListener('keydown',function(e){
   if(e.key!=='Enter'||e.defaultPrevented||e.isComposing||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey)return;
