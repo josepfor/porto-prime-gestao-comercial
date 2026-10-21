@@ -148,28 +148,17 @@ jobs:
           Get-Content "dist/SHA256SUMS.txt"
           Write-Host "OK: pacote ZIP e hashes SHA-256 gerados."
 
-      # Download separado do instalador: evita obrigar o usuário a baixar
-      # o ZIP agregado de ~574 MB só para obter o instalador.
-      - name: Disponibilizar instalador separado
-        uses: actions/upload-artifact@v4
-        with:
-          name: PortoPrime-Setup-Windows
-          path: |
-            dist/PortoPrime-Setup-*-x64.exe
-            dist/SHA256SUMS.txt
-          if-no-files-found: error
-          compression-level: 0
-
-      - name: Disponibilizar pacote completo
+      # Artefato temporário mínimo: o ZIP completo fica apenas na Release.
+      # A cota do Actions nunca deve bloquear testes ou publicação oficial.
+      - name: Disponibilizar instalador separado para teste
         uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
-          name: PortoPrime-4.4.9-Windows
-          path: |
-            dist/PortoPrime-*-Windows.zip
-            dist/SHA256SUMS.txt
-          if-no-files-found: error
+          name: PortoPrime-Setup-Windows
+          path: dist/PortoPrime-Setup-*-x64.exe
+          if-no-files-found: warn
           compression-level: 0
+          retention-days: 1
 
       - name: Publicar Release do Porto Prime
         if: github.ref == 'refs/heads/main'
@@ -194,7 +183,7 @@ jobs:
           }
           else {
             Write-Host "Criando Release $tag..."
-            gh release create $tag $assets --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title "Porto Prime $version" --notes "Versao $version do Porto Prime para Windows. Inclui Portable, Instalador, Atualizador seguro, ZIP e SHA256SUMS.txt."
+            gh release create $tag $assets --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title "Porto Prime $version" --notes "Porto Prime $version para Windows. Downloads: Instalador (recomendado), Portable, Atualizador e pacote ZIP completo. SHA256SUMS.txt contém os hashes SHA-256 para conferência. O Windows pode exibir avisos enquanto os executáveis não tiverem assinatura digital confiável."
           }
 
       - name: Resumo da compilacao
