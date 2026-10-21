@@ -42,3 +42,184 @@
 @media(max-width:700px){.legacy-pdv>.legacy-shortcuts-top{grid-template-columns:repeat(3,minmax(0,1fr))!important}.legacy-pdv>.legacy-shortcuts-top button{height:50px!important}}
 .dark-ui .legacy-pdv>.pdv-customer-top{background:#172033!important;border-color:#344054!important}
 .dark-ui .legacy-pdv>.pdv-customer-top label{color:#cbd5e1!important}
+
+
+/* PDV — proposta minimalista azul fosco */
+.legacy-pdv{gap:10px!important;color:#263447!important}
+.legacy-pdv .legacy-cash{
+ background:#e4eaf1!important;background-image:none!important;color:#263447!important;
+ border:1px solid #d6dfe9!important;border-radius:12px!important;box-shadow:none!important;
+ min-height:54px!important;padding:10px 16px!important
+}
+.legacy-pdv .legacy-cash span,.legacy-pdv .legacy-cash b,.legacy-pdv .legacy-cash strong{color:#263447!important;text-shadow:none!important}
+.legacy-pdv .legacy-cash b{font-size:19px!important;font-weight:700!important}
+.legacy-pdv .legacy-cash strong{font-size:15px!important;font-weight:650!important}
+.legacy-pdv>.legacy-shortcuts-top{
+ background:#e8edf3!important;background-image:none!important;border:1px solid #d8e0e9!important;
+ border-radius:12px!important;padding:8px!important;gap:7px!important;box-shadow:none!important
+}
+.legacy-pdv>.legacy-shortcuts-top button{
+ background:#f8fafc!important;background-image:none!important;color:#34465b!important;
+ border:1px solid #d5dee8!important;border-radius:9px!important;box-shadow:none!important;
+ text-shadow:none!important;height:54px!important;padding:5px 7px!important
+}
+.legacy-pdv>.legacy-shortcuts-top button:hover,
+.legacy-pdv>.legacy-shortcuts-top button:focus-visible{
+ background:#e2eaf3!important;border-color:#9aafc6!important;outline:none!important
+}
+.legacy-pdv>.legacy-shortcuts-top button span{color:#385779!important;font-size:19px!important}
+.legacy-pdv>.legacy-shortcuts-top button b{color:#263447!important;font-weight:700!important;font-size:11px!important}
+.legacy-pdv>.legacy-shortcuts-top button small{color:#718096!important;font-weight:600!important;font-size:10px!important}
+.legacy-pdv>.pdv-customer-top{
+ background:#fff!important;border:1px solid #dce3eb!important;border-radius:12px!important;
+ padding:12px 14px!important;box-shadow:none!important
+}
+.legacy-pdv>.pdv-customer-top label{color:#52657c!important;font-weight:650!important}
+.legacy-pdv>.pdv-customer-top select{background:#fbfcfd!important;border:1px solid #dce3eb!important;color:#263447!important;font-weight:600!important}
+.legacy-pdv>.pdv-customer-top small{color:#718096!important}
+.legacy-pdv .legacy-searchbar{
+ background:#e5ebf2!important;background-image:none!important;border:1px solid #d6dfe9!important;
+ border-radius:12px!important;box-shadow:none!important;padding:12px!important
+}
+.legacy-pdv .legacy-searchbar label,.legacy-pdv .legacy-searchbar b,.legacy-pdv .legacy-searchbar strong{
+ color:#52657c!important;text-shadow:none!important
+}
+.legacy-pdv .legacy-searchbar input,.legacy-pdv input#pdvSearch,.legacy-pdv .legacy-searchbar .legacy-search-input{
+ background:#fff!important;color:#263447!important;border:1px solid #cbd6e2!important;
+ border-radius:9px!important;box-shadow:none!important;text-shadow:none!important
+}
+.legacy-pdv .legacy-searchbar input:focus,.legacy-pdv input#pdvSearch:focus{
+ border-color:#7890aa!important;outline:2px solid rgba(56,87,121,.12)!important;box-shadow:none!important
+}
+.legacy-pdv .legacy-main,.legacy-pdv .legacy-client-row,.legacy-pdv .legacy-paybox,
+.legacy-pdv .legacy-actions,.legacy-pdv .legacy-status{
+ background:#fff!important;background-image:none!important;color:#263447!important;
+ border:1px solid #dce3eb!important;border-radius:12px!important;box-shadow:none!important
+}
+.legacy-pdv .legacy-actions{padding:12px!important}
+.legacy-pdv .legacy-subtotal{
+ background:#f2f5f8!important;background-image:none!important;border:1px solid #dce3eb!important;
+ border-radius:10px!important;color:#263447!important;box-shadow:none!important;min-height:76px!important
+}
+.legacy-pdv .legacy-subtotal:before{filter:grayscale(1)!important;opacity:.6!important}
+.legacy-pdv .legacy-subtotal span{color:#65758a!important;border-color:#d1dae4!important}
+.legacy-pdv .legacy-subtotal strong{color:#263447!important;font-size:38px!important;font-weight:750!important;text-shadow:none!important}
+.legacy-pdv input,.legacy-pdv select,.legacy-pdv textarea{
+ background:#fbfcfd!important;color:#263447!important;border:1px solid #dce3eb!important;
+ border-radius:8px!important;box-shadow:none!important;text-shadow:none!important
+}
+.legacy-pdv input:focus,.legacy-pdv select:focus,.legacy-pdv textarea:focus{
+ border-color:#7890aa!important;outline:2px solid rgba(56,87,121,.12)!important;box-shadow:none!important
+}
+.legacy-pdv button:not(.legacy-shortcuts-top button){
+ text-shadow:none!important;box-shadow:none!important;filter:none!important
+}
+.legacy-pdv .primary,.legacy-pdv button.primary,.legacy-pdv .legacy-finish,.legacy-pdv #pdvFinish{
+ background:#385779!important;background-image:none!important;color:#fff!important;
+ border:1px solid #385779!important;border-radius:9px!important;box-shadow:none!important
+}
+.legacy-pdv .primary:hover,.legacy-pdv button.primary:hover,.legacy-pdv #pdvFinish:hover{background:#2c4663!important}
+.legacy-pdv .secondary,.legacy-pdv button.secondary{
+ background:#fff!important;background-image:none!important;color:#385779!important;
+ border:1px solid #d5dee8!important;border-radius:9px!important;box-shadow:none!important
+}
+.legacy-pdv .legacy-items,.legacy-pdv table{border-color:#dce3eb!important}
+.legacy-pdv th{background:#f2f5f8!important;color:#52657c!important;text-shadow:none!important}
+.legacy-pdv td{color:#263447!important;border-color:#e5eaf0!important}
+.legacy-pdv .legacy-status,.legacy-pdv .legacy-paybox{padding:12px!important}
+.dark-ui .legacy-pdv .legacy-cash,.dark-ui .legacy-pdv>.legacy-shortcuts-top,
+.dark-ui .legacy-pdv .legacy-searchbar,.dark-ui .legacy-pdv .legacy-subtotal{
+ background:#202b39!important;color:#e0e7ef!important;border-color:#354354!important
+}
+.dark-ui .legacy-pdv .legacy-cash span,.dark-ui .legacy-pdv .legacy-cash b,.dark-ui .legacy-pdv .legacy-cash strong,
+.dark-ui .legacy-pdv .legacy-searchbar label,.dark-ui .legacy-pdv .legacy-searchbar b,
+.dark-ui .legacy-pdv .legacy-subtotal strong,.dark-ui .legacy-pdv .legacy-subtotal span{color:#e0e7ef!important}
+.dark-ui .legacy-pdv>.legacy-shortcuts-top button,.dark-ui .legacy-pdv>.pdv-customer-top,
+.dark-ui .legacy-pdv .legacy-main,.dark-ui .legacy-pdv .legacy-client-row,.dark-ui .legacy-pdv .legacy-paybox,
+.dark-ui .legacy-pdv .legacy-actions{background:#202b39!important;color:#e0e7ef!important;border-color:#354354!important}
+.dark-ui .legacy-pdv input,.dark-ui .legacy-pdv select,.dark-ui .legacy-pdv textarea{background:#182230!important;color:#e0e7ef!important;border-color:#354354!important}
+@media(max-width:700px){.legacy-pdv>.legacy-shortcuts-top{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+
+
+/* Refinamento conservador da área de itens e pagamento: preservar layout e controles */
+.legacy-pdv .legacy-main{min-width:0!important}
+.legacy-pdv .legacy-items,.legacy-pdv .legacy-items-wrap,.legacy-pdv .legacy-products,
+.legacy-pdv .legacy-cart,.legacy-pdv .legacy-table-wrap{
+ background:#fff!important;background-image:none!important;border:1px solid #dce3eb!important;
+ border-radius:11px!important;box-shadow:none!important;overflow:hidden!important
+}
+.legacy-pdv .legacy-items thead,.legacy-pdv .legacy-items th,
+.legacy-pdv .legacy-cart thead,.legacy-pdv .legacy-cart th,
+.legacy-pdv .legacy-products thead,.legacy-pdv .legacy-products th{
+ background:#f0f3f7!important;color:#64748b!important;border-bottom:1px solid #d5dee8!important;
+ font-weight:650!important;letter-spacing:.035em!important;text-shadow:none!important
+}
+.legacy-pdv .legacy-items td,.legacy-pdv .legacy-cart td,.legacy-pdv .legacy-products td{
+ background:#fff!important;color:#34465b!important;border-bottom:1px solid #edf0f4!important
+}
+.legacy-pdv .legacy-items tbody tr:hover td,.legacy-pdv .legacy-cart tbody tr:hover td,
+.legacy-pdv .legacy-products tbody tr:hover td{background:#f7f9fb!important}
+.legacy-pdv .legacy-items .empty,.legacy-pdv .legacy-cart .empty,
+.legacy-pdv .legacy-empty{color:#8794a5!important}
+.legacy-pdv .legacy-paybox{
+ background:#f5f7fa!important;background-image:none!important;border:1px solid #dce3eb!important;
+ border-radius:12px!important;padding:12px!important;box-shadow:none!important
+}
+.legacy-pdv .legacy-paybox h3,.legacy-pdv .legacy-paybox h4,
+.legacy-pdv .legacy-paybox .title,.legacy-pdv .legacy-paybox label{
+ color:#52657c!important;text-shadow:none!important;font-weight:650!important
+}
+.legacy-pdv .legacy-subtotal{
+ display:flex!important;align-items:center!important;justify-content:center!important;gap:16px!important;
+ background:#e7edf4!important;background-image:none!important;border:1px solid #d3deea!important;
+ border-radius:10px!important;box-shadow:none!important;min-height:76px!important;padding:12px!important
+}
+.legacy-pdv .legacy-subtotal:before{filter:grayscale(1)!important;opacity:.55!important}
+.legacy-pdv .legacy-subtotal span{color:#52657c!important;border-color:#cbd6e2!important}
+.legacy-pdv .legacy-subtotal strong{
+ color:#263447!important;font-size:36px!important;font-weight:750!important;text-shadow:none!important;
+ letter-spacing:-.025em!important
+}
+.legacy-pdv .legacy-paybox .legacy-payment-row,
+.legacy-pdv .legacy-paybox .payment-row,
+.legacy-pdv .legacy-paybox .pay-row{
+ gap:7px!important
+}
+.legacy-pdv .legacy-paybox button:not(.legacy-finish):not(#pdvFinish){
+ background:#fff!important;background-image:none!important;color:#385779!important;
+ border:1px solid #d5dee8!important;border-radius:8px!important;box-shadow:none!important
+}
+.legacy-pdv .legacy-paybox button:not(.legacy-finish):not(#pdvFinish):hover{
+ background:#e9eef4!important;border-color:#b8c7d8!important
+}
+.legacy-pdv .legacy-paybox .legacy-finish,.legacy-pdv .legacy-paybox #pdvFinish,
+.legacy-pdv .legacy-paybox button.success,.legacy-pdv .legacy-paybox .btn-success{
+ background:#385779!important;background-image:none!important;color:#fff!important;
+ border:1px solid #385779!important;border-radius:9px!important;box-shadow:none!important;
+ text-shadow:none!important;min-height:54px!important;font-weight:700!important
+}
+.legacy-pdv .legacy-paybox .legacy-finish:hover,.legacy-pdv .legacy-paybox #pdvFinish:hover,
+.legacy-pdv .legacy-paybox button.success:hover,.legacy-pdv .legacy-paybox .btn-success:hover{
+ background:#2c4663!important
+}
+.legacy-pdv .legacy-paybox .remove,.legacy-pdv .legacy-paybox .remove-payment,
+.legacy-pdv .legacy-paybox button[aria-label*="Remover"]{
+ background:#f8eeee!important;color:#a95159!important;border:1px solid #ead3d5!important
+}
+.legacy-pdv .legacy-paybox .payment-total,.legacy-pdv .legacy-paybox .payment-summary{
+ background:#fff!important;border:1px solid #dce3eb!important;border-radius:9px!important;box-shadow:none!important
+}
+.legacy-pdv .legacy-paybox .payment-total strong,.legacy-pdv .legacy-paybox .payment-summary strong{
+ color:#263447!important;text-shadow:none!important
+}
+.dark-ui .legacy-pdv .legacy-items,.dark-ui .legacy-pdv .legacy-items td,
+.dark-ui .legacy-pdv .legacy-cart,.dark-ui .legacy-pdv .legacy-cart td,
+.dark-ui .legacy-pdv .legacy-products,.dark-ui .legacy-pdv .legacy-products td,
+.dark-ui .legacy-pdv .legacy-paybox{background:#202b39!important;color:#e0e7ef!important;border-color:#354354!important}
+.dark-ui .legacy-pdv .legacy-items th,.dark-ui .legacy-pdv .legacy-cart th,
+.dark-ui .legacy-pdv .legacy-products th{background:#263547!important;color:#a2afbf!important;border-color:#354354!important}
+.dark-ui .legacy-pdv .legacy-subtotal{background:#29394b!important;border-color:#354354!important}
+.dark-ui .legacy-pdv .legacy-subtotal strong,.dark-ui .legacy-pdv .legacy-subtotal span,
+.dark-ui .legacy-pdv .legacy-paybox h3,.dark-ui .legacy-pdv .legacy-paybox h4,
+.dark-ui .legacy-pdv .legacy-paybox label{color:#e0e7ef!important}
+.dark-ui .legacy-pdv .legacy-paybox button:not(.legacy-finish):not(#pdvFinish){background:#263547!important;color:#e0e7ef!important;border-color:#354354!important}
