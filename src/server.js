@@ -63,19 +63,9 @@ app.get('/api/auth/recovery-info',async(req,res)=>{if(!localRequest(req))return 
   const q=await pool.query("SELECT email FROM users WHERE role='Administrador' AND active=true ORDER BY id LIMIT 1");
   res.json({machineId:MACHINE_ID,email:q.rows[0]?.email||''});
 }catch(e){res.status(500).json({error:'Não foi possível preparar a recuperação.'})}});
-app.post('/api/auth/recover-admin',async(req,res)=>{if(!localRequest(req))return res.status(403).json({error:'Recuperação disponível somente neste computador.'});try{
-  const machineId=String(req.body?.machineId||'').trim().toUpperCase(),email=String(req.body?.email||'').trim(),password=String(req.body?.password||'');
-  if(machineId!==MACHINE_ID)throw Error('ID deste computador não confere.');
-  if(password.length<6)throw Error('A nova senha deve ter pelo menos 6 caracteres.');
-  const q=await pool.query("SELECT id,email FROM users WHERE role='Administrador' AND active=true AND lower(email)=lower($1) ORDER BY id LIMIT 1",[email]);
-  if(!q.rowCount)throw Error('Administrador não encontrado neste banco.');
-  try{await saveLogicalBackup('PASSWORD-RECOVERY')}catch{}
-  const hash=await bcrypt.hash(password,12);
-  await pool.query('UPDATE users SET password_hash=$1,force_change_password=false WHERE id=$2',[hash,q.rows[0].id]);
-  await audit(pool,q.rows[0].id,'Senha administrativa recuperada','Recuperação local no computador '+MACHINE_ID.slice(-6));
-  loginAttempts.clear();
-  res.json({ok:true});
-}catch(e){res.status(400).json({error:e.message})}});
+// 5.1: Bloqueia o fluxo anterior: machineId + e-mail não provam autorização.
+// Recuperação independente deve exigir prova criptográfica ou suporte autorizado.
+app.post('/api/auth/recover-admin', (_req,res)=>res.status(403).json({error:'Recuperação por identificação do computador desativada por segurança. Entre com sua senha ou contate o suporte para recuperação verificada.'}));
 
 app.post('/api/auth/change-initial-password',auth,async(req,res)=>{try{let password=String(req.body?.password||'');if(password.length<8)throw Error('A nova senha deve ter pelo menos 8 caracteres.');let q=await pool.query('SELECT * FROM users WHERE id=$1 AND active=true',[req.user.id]);if(!q.rowCount)throw Error('Usuário não encontrado.');if(!q.rows[0].force_change_password)return res.json({ok:true});let h=await bcrypt.hash(password,12);await pool.query('UPDATE users SET password_hash=$1,force_change_password=false WHERE id=$2',[h,req.user.id]);await audit(pool,req.user.id,'Senha inicial alterada','Primeiro acesso concluído');res.json({ok:true})}catch(e){res.status(400).json({error:e.message})}});
 app.get('/api/me',auth,async(req,res)=>{let q=await pool.query('SELECT id,name,email,role,permissions,force_change_password FROM users WHERE id=$1 AND active=true',[req.user.id]);if(!q.rowCount)return res.status(401).json({error:'Usuário inativo.'});res.json(publicUser(q.rows[0]))});
