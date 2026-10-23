@@ -442,8 +442,8 @@ app.post('/api/backup/create',auth,roles('Administrador'),async(req,res)=>{try{l
 app.post('/api/backup/restore',auth,roles('Administrador'),async(req,res)=>{try{
   let b=req.body;
   if(!b||b.format!==BACKUP_FORMAT||!b.tables)throw Error('Arquivo de backup inválido.');
-  if(b.integrity_sha256&&b.integrity_sha256!==backupDigest(b))throw Error('A integridade do backup não pôde ser confirmada. O arquivo pode ter sido alterado ou corrompido.');
-  if(!Array.isArray(b.tables.users)||!Array.isArray(b.tables.products))throw Error('Backup incompleto: tabelas essenciais ausentes.');
+  if(typeof b.integrity_sha256!=='string'||!/^[a-f0-9]{64}$/i.test(b.integrity_sha256)||b.integrity_sha256!==backupDigest(b))throw Error('Backup sem hash SHA-256 válido ou com conteúdo alterado. Backups antigos precisam de conversão segura antes da restauração.');
+  for(const table of BACKUP_TABLES)if(!Array.isArray(b.tables[table]))throw Error('Backup incompleto: tabela obrigatória ausente: '+table);
   for(const key of Object.keys(b.tables))if(!BACKUP_TABLES.includes(key))throw Error('Backup contém tabela não autorizada: '+key);
   let safety=await saveLogicalBackup('PRE-RESTORE');
   let result=await tx(async c=>{
