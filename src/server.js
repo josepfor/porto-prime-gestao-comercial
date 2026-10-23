@@ -63,9 +63,38 @@ app.get('/api/auth/recovery-info',async(req,res)=>{if(!localRequest(req))return 
   const q=await pool.query("SELECT email FROM users WHERE role='Administrador' AND active=true ORDER BY id LIMIT 1");
   res.json({machineId:MACHINE_ID,email:q.rows[0]?.email||''});
 }catch(e){res.status(500).json({error:'Não foi possível preparar a recuperação.'})}});
-// 5.1: Bloqueia o fluxo anterior: machineId + e-mail não provam autorização.
-// Recuperação independente deve exigir prova criptográfica ou suporte autorizado.
-app.post('/api/auth/recover-admin', (_req,res)=>res.status(403).json({error:'Recuperação por identificação do computador desativada por segurança. Entre com sua senha ou contate o suporte para recuperação verificada.'}));
+// 5.1: recuperação por autorização externa, sem senha padrão nem prova por Machine ID.
+// O operador deve iniciar o processo com PORTO_PRIME_RECOVERY_TOKEN (segredo aleatório >= 32 caracteres).
+// O token é de uso único, só é aceito no próprio computador e expira em 15 minutos.
+const recoveryToken=String(process.env.PORTO_PRIME_RECOVERY_TOKEN||'');
+delete process.env.PORTO_PRIME_RECOVERY_TOKEN;
+let recoveryAuthorized=recoveryToken.length>=32 ? {digest:crypto.createHash('sha256').update(recoveryToken).digest(),until:Date.now()+15*60*1000,used:false} : null;
+let recoveryFailures=0;
+app.post('/api/auth/recover-admin',async(req,res)=>{
+  if(!localRequest(req))return res.status(403).json({error:'Recuperação disponível somente neste computador.'});
+  if(!recoveryAuthorized||recoveryAuthorized.used||Date.now()>recoveryAuthorized.until||recoveryFailures>=5)return res.status(403).json({error:'Recuperação indisponível. Solicite nova autorização ao suporte.'});
+  const supplied=String(req.body?.recoveryToken||'');
+  const got=crypto.createHash('sha256').update(supplied).digest();
+  if(!crypto.timingSafeEqual(got,recoveryAuthorized.digest)){
+    recoveryFailures++;
+    return res.status(403).json({error:'Autorização de recuperação inválida.'});
+  }
+  // Consumir a autorização antes da operação; falhas não permitem repetição automática.
+  recoveryAuthorized.used=true;
+  try{
+    const email=String(req.body?.email||'').trim();
+    const password=String(req.body?.password||'');
+    if(password.length<12)throw Error('A senha deve conter pelo menos 12 caracteres.');
+    const q=await pool.query("SELECT id FROM users WHERE role='Administrador' AND active=true AND lower(email)=lower($1) LIMIT 1",[email]);
+    if(!q.rowCount)throw Error('Administrador não encontrado.');
+    // Interromper se o backup preventivo falhar.
+    await saveLogicalBackup('PASSWORD-RECOVERY');
+    const hash=await bcrypt.hash(password,12);
+    await pool.query('UPDATE users SET password_hash=$1,force_change_password=false WHERE id=$2',[hash,q.rows[0].id]);
+    await audit(pool,q.rows[0].id,'Recuperação administrativa autorizada','Token externo de uso único');
+    res.json({ok:true});
+  }catch(e){res.status(400).json({error:'Recuperação não concluída: '+e.message});}
+});
 
 app.post('/api/auth/change-initial-password',auth,async(req,res)=>{try{let password=String(req.body?.password||'');if(password.length<8)throw Error('A nova senha deve ter pelo menos 8 caracteres.');let q=await pool.query('SELECT * FROM users WHERE id=$1 AND active=true',[req.user.id]);if(!q.rowCount)throw Error('Usuário não encontrado.');if(!q.rows[0].force_change_password)return res.json({ok:true});let h=await bcrypt.hash(password,12);await pool.query('UPDATE users SET password_hash=$1,force_change_password=false WHERE id=$2',[h,req.user.id]);await audit(pool,req.user.id,'Senha inicial alterada','Primeiro acesso concluído');res.json({ok:true})}catch(e){res.status(400).json({error:e.message})}});
 app.get('/api/me',auth,async(req,res)=>{let q=await pool.query('SELECT id,name,email,role,permissions,force_change_password FROM users WHERE id=$1 AND active=true',[req.user.id]);if(!q.rowCount)return res.status(401).json({error:'Usuário inativo.'});res.json(publicUser(q.rows[0]))});
