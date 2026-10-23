@@ -150,15 +150,17 @@ jobs:
           Get-Content "dist/SHA256SUMS.txt"
           Write-Host "OK: pacote ZIP e hashes SHA-256 gerados."
 
-      # Artefato temporário mínimo: o ZIP completo fica apenas na Release.
-      # A cota do Actions nunca deve bloquear testes ou publicação oficial.
-      - name: Disponibilizar instalador separado para teste
+      # Branches de validação entregam o pacote completo sem publicar Release.
+      # Na main, os downloads continuam sendo publicados na Release.
+      - name: Disponibilizar ZIP candidato para validacao
+        if: github.ref != 'refs/heads/main'
         uses: actions/upload-artifact@v4
-        continue-on-error: true
         with:
-          name: PortoPrime-Setup-Windows
-          path: dist/PortoPrime-Setup-*-x64.exe
-          if-no-files-found: warn
+          name: PortoPrime-Candidato-Windows-${{ github.run_number }}
+          path: |
+            dist/PortoPrime-*-Windows.zip
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
           compression-level: 0
           retention-days: 1
 
