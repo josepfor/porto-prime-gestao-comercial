@@ -1,16 +1,13 @@
-const fs = require('fs');
-const assert = require('assert');
-const server = fs.readFileSync('src/server.js', 'utf8');
-const boot = server.slice(server.indexOf('async function boot(){'));
-assert(boot.startsWith('async function boot(){'), 'boot não localizado');
-for (const fn of ['applyEmergencyMasterUserReset','applyEmergencyMasterPasswordReset','applyEmergencyMasterReset446','applyEmergencyMasterReset447']) {
-  assert(!boot.includes('await ' + fn + '('), 'Reset legado chamado na inicialização: ' + fn);
-}
-const start = server.indexOf("app.post('/api/auth/recover-admin'");
-const end = server.indexOf("app.post('/api/auth/change-initial-password'", start);
-assert(start !== -1 && end > start, 'Rota de recuperação não localizada');
-const recovery = server.slice(start, end);
-assert(recovery.includes('status(403)'), 'Recuperação insegura não foi bloqueada');
-assert(!recovery.includes('password_hash'), 'Rota de recuperação ainda altera a senha');
-assert(server.includes("/api/auth/change-initial-password"), 'Troca inicial autenticada ausente');
-console.log('OK: recuperação insegura bloqueada e resets de inicialização desativados.');
+const fs=require('fs'),assert=require('assert');
+const server=fs.readFileSync('src/server.js','utf8');
+const app=fs.readFileSync('public/app.js','utf8');
+const html=fs.readFileSync('public/index.html','utf8');
+const boot=server.slice(server.indexOf('async function boot(){'));
+for(const fn of ['applyEmergencyMasterUserReset','applyEmergencyMasterPasswordReset','applyEmergencyMasterReset446','applyEmergencyMasterReset447'])assert(!boot.includes('await '+fn+'('),'Reset inseguro em boot: '+fn);
+const start=server.indexOf("app.post('/api/auth/recover-admin'"),end=server.indexOf("app.post('/api/auth/change-initial-password'",start);
+assert(start>=0&&end>start,'Rota de recuperação ausente');
+const recovery=server.slice(start,end);
+for(const part of ['recoveryToken','timingSafeEqual','recoveryFailures>=5','Date.now()>recoveryAuthorized.until','recoveryAuthorized.used=true',"saveLogicalBackup('PASSWORD-RECOVERY')",'password.length<12'])assert(recovery.includes(part),'Falta proteção: '+part);
+assert(!recovery.includes('machineId!==MACHINE_ID'),'Machine ID não deve autorizar recuperação');
+assert(html.includes('id="recoveryToken"')&&app.includes('recoveryToken'),'Interface não usa autorização');
+console.log('OK: recuperação 5.1 com autorização temporária e proteção anti-regressão.');
