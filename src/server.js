@@ -474,12 +474,19 @@ app.post('/api/backup/restore',auth,roles('Administrador'),async(req,res)=>{try{
   if(typeof b.integrity_sha256!=='string'||!/^[a-f0-9]{64}$/i.test(b.integrity_sha256)||b.integrity_sha256!==backupDigest(b))throw Error('Backup sem hash SHA-256 válido ou com conteúdo alterado. Backups antigos precisam de conversão segura antes da restauração.');
   for(const table of BACKUP_TABLES)if(!Array.isArray(b.tables[table]))throw Error('Backup incompleto: tabela obrigatória ausente: '+table);
   for(const key of Object.keys(b.tables))if(!BACKUP_TABLES.includes(key))throw Error('Backup contém tabela não autorizada: '+key);
+  // Exigir backup preventivo antes de iniciar a transação destrutiva.
   let safety=await saveLogicalBackup('PRE-RESTORE');
   let result=await tx(async c=>{
     let allowed={};
     for(const t of BACKUP_TABLES){
       let q=await c.query("SELECT column_name FROM information_schema.columns WHERE table_schema='public' AND table_name=$1",[t]);
       allowed[t]=new Set(q.rows.map(x=>x.column_name));
+      // Verificar todas as linhas e colunas ANTES de truncar qualquer tabela.
+      for(const row of b.tables[t]){
+        if(!row||typeof row!=='object'||Array.isArray(row))throw Error('Linha inválida no backup: '+t);
+        const cols=Object.keys(row);
+        if(!cols.length||cols.some(k=>!allowed[t].has(k)))throw Error('Coluna inválida no backup: '+t);
+      }
     }
     await c.query(`TRUNCATE TABLE ${[...BACKUP_TABLES].reverse().join(',')} RESTART IDENTITY CASCADE`);
     for(const t of BACKUP_TABLES){
