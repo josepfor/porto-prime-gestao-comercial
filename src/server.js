@@ -536,10 +536,8 @@ async function applyEmergencyMasterReset447(){
 }
 async function boot(){
   await initDb();
-  await applyEmergencyMasterUserReset();
-  await applyEmergencyMasterPasswordReset();
-  await applyEmergencyMasterReset446();
-  await applyEmergencyMasterReset447();
+  // 5.1: Never reset existing administrative credentials on startup.
+  // Legacy migration functions remain for historical review only.
   let n=+(await pool.query('SELECT count(*) n FROM users')).rows[0].n;
   if(!n){
     let h=await bcrypt.hash('Admin@123',12);
