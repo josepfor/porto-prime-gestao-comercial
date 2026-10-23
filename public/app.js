@@ -13,39 +13,22 @@ async function activateLicense(){let key=document.getElementById('licenseKeyInpu
 async function startTrial(){let btn=document.getElementById('trialStartButton'),st=document.getElementById('trialStatus');try{btn.disabled=true;btn.textContent='INICIANDO...';let r=await fetch('/api/license/trial/start',{method:'POST',headers:{'Content-Type':'application/json'}}),j=await r.json();if(!r.ok)throw Object.assign(Error(j.error||'Não foi possível iniciar a demonstração.'),{data:j});st.className='ok';st.textContent='Demonstração ativada. Abrindo Porto Prime...';setTimeout(()=>location.reload(),700)}catch(e){st.className='danger';st.textContent=e.message;showActivation(e.data||{available:true,error:e.message,machineId:licenseMachineId?.textContent})}}
 async function doLogin(e){e.preventDefault();const btn=e.submitter||document.querySelector('.login-btn');try{loginMsg.className='muted';loginMsg.textContent='Verificando acesso...';if(btn){btn.disabled=true;btn.dataset.originalText=btn.innerHTML;btn.textContent='ENTRANDO...'}let j=await api('/auth/login',{method:'POST',body:JSON.stringify({email:loginEmail.value.trim(),password:loginPass.value})});token=j.token;me=j.user;localStorage.cg42token=token;loginMsg.className='ok';loginMsg.textContent='Acesso confirmado.';if(me.must_change_password)return initialPasswordSetup();await start()}catch(x){loginMsg.className='danger';loginMsg.textContent=x.message||'Não foi possível entrar.'}finally{if(btn){btn.disabled=false;if(btn.dataset.originalText)btn.innerHTML=btn.dataset.originalText}}}
 async function togglePasswordRecovery(){
-  const box=document.getElementById('passwordRecoveryBox');
-  if(!box)return;
-  const opening=box.classList.contains('hidden');
-  box.classList.toggle('hidden');
-  if(!opening)return;
-  const msg=document.getElementById('recoveryMsg');if(msg)msg.textContent='Carregando dados deste computador...';
-  try{
-    const r=await fetch('/api/auth/recovery-info',{cache:'no-store'});
-    const j=await r.json().catch(()=>({}));
-    if(!r.ok)throw Error(j.error||'Não foi possível preparar a recuperação.');
-    const email=document.getElementById('recoveryEmail'),machine=document.getElementById('recoveryMachine');
-    if(email)email.value=j.email||'admin@construgest.local';
-    if(machine)machine.value=j.machineId||'';
-    if(msg){msg.className='ok';msg.textContent='Pronto. Defina uma nova senha abaixo.'}
-    document.getElementById('recoveryPassword')?.focus();
-  }catch(e){
-    if(msg){msg.className='danger';msg.textContent=e.message}
-  }
+ const box=document.getElementById('passwordRecoveryBox');if(!box)return;
+ box.classList.toggle('hidden');
+ const msg=document.getElementById('recoveryMsg');
+ if(msg)msg.textContent='Solicite ao suporte uma autorização temporária. O código de identificação do computador, sozinho, não permite redefinir a senha.';
 }
 async function savePasswordRecovery(){
-  const email=document.getElementById('recoveryEmail')?.value||'',machineId=document.getElementById('recoveryMachine')?.value||'',p=document.getElementById('recoveryPassword')?.value||'',p2=document.getElementById('recoveryPassword2')?.value||'',msg=document.getElementById('recoveryMsg');
-  if(p.length<6){if(msg){msg.className='danger';msg.textContent='Use pelo menos 6 caracteres.'}return}
-  if(p!==p2){if(msg){msg.className='danger';msg.textContent='As senhas não conferem.'}return}
-  try{
-    if(msg){msg.className='muted';msg.textContent='Redefinindo senha...'}
-    const r=await fetch('/api/auth/recover-admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,machineId,password:p})});
-    const j=await r.json().catch(()=>({}));
-    if(!r.ok)throw Error(j.error||'Não foi possível redefinir a senha.');
-    if(msg){msg.className='ok';msg.textContent='Senha redefinida com sucesso. Use a nova senha para entrar.'}
-    loginEmail.value=email;loginPass.value='';loginPass.focus();
-  }catch(e){
-    if(msg){msg.className='danger';msg.textContent=e.message}
-  }
+ const email=document.getElementById('recoveryEmail')?.value||'',recoveryToken=document.getElementById('recoveryToken')?.value||'',password=document.getElementById('recoveryPassword')?.value||'',confirmation=document.getElementById('recoveryPassword2')?.value||'',msg=document.getElementById('recoveryMsg');
+ if(password.length<12){if(msg)msg.textContent='Use pelo menos 12 caracteres.';return}
+ if(password!==confirmation){if(msg)msg.textContent='As senhas não conferem.';return}
+ if(recoveryToken.length<32){if(msg)msg.textContent='Informe a autorização temporária fornecida pelo suporte.';return}
+ try{
+  const r=await fetch('/api/auth/recover-admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,recoveryToken,password})});
+  const j=await r.json().catch(()=>({}));if(!r.ok)throw Error(j.error||'Recuperação não autorizada.');
+  if(msg){msg.className='ok';msg.textContent='Senha alterada. Entre com sua nova senha.'}
+  loginEmail.value=email;loginPass.value='';loginPass.focus();
+ }catch(e){if(msg){msg.className='danger';msg.textContent=e.message}}
 }
 function initialPasswordSetup(){
   if(document.getElementById('modal'))return;
