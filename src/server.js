@@ -90,8 +90,11 @@ app.post('/api/auth/recover-admin',async(req,res)=>{
     // Interromper se o backup preventivo falhar.
     await saveLogicalBackup('PASSWORD-RECOVERY');
     const hash=await bcrypt.hash(password,12);
-    await pool.query('UPDATE users SET password_hash=$1,force_change_password=false WHERE id=$2',[hash,q.rows[0].id]);
-    await audit(pool,q.rows[0].id,'Recuperação administrativa autorizada','Token externo de uso único');
+    await tx(async c=>{
+      const updated=await c.query("UPDATE users SET password_hash=$1,force_change_password=false WHERE id=$2 AND role='Administrador' AND active=true RETURNING id",[hash,q.rows[0].id]);
+      if(!updated.rowCount)throw Error('Administrador não está mais disponível.');
+      await audit(c,q.rows[0].id,'Recuperação administrativa autorizada','Token externo de uso único');
+    });
     res.json({ok:true});
   }catch(e){res.status(400).json({error:'Recuperação não concluída: '+e.message});}
 });
