@@ -148,17 +148,17 @@ jobs:
           Get-Content "dist/SHA256SUMS.txt"
           Write-Host "OK: pacote ZIP e hashes SHA-256 gerados."
 
-      # Artefato temporário mínimo: o ZIP completo fica apenas na Release.
-      # A cota do Actions nunca deve bloquear testes ou publicação oficial.
-      - name: Disponibilizar instalador separado para teste
+      # Pacote completo para download direto no Actions, inclusive em branches de correção.
+      # O ZIP contém Setup, Atualização e Portátil.
+      - name: Disponibilizar pacote Windows completo
         uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
-          name: PortoPrime-Setup-Windows
-          path: dist/PortoPrime-Setup-*-x64.exe
-          if-no-files-found: warn
+          name: PortoPrime-Windows-Completo
+          path: dist/PortoPrime-*-Windows.zip
+          if-no-files-found: error
           compression-level: 0
-          retention-days: 1
+          retention-days: 3
 
       - name: Publicar Release do Porto Prime
         if: github.ref == 'refs/heads/main'
