@@ -88,7 +88,7 @@ app.get('/api/dashboard',auth,async(req,res)=>{const [sales,prod,low,fin]=await 
 app.get('/api/products/next-code',auth,async(req,res)=>{try{res.json({code:await nextProductCode(pool)})}catch(e){res.status(400).json({error:e.message})}});
 app.get('/api/products/categories',auth,async(req,res)=>{try{res.json((await pool.query("SELECT DISTINCT trim(category) AS category FROM products WHERE category IS NOT NULL AND trim(category)<>'' ORDER BY category")).rows.map(x=>x.category))}catch(e){res.status(400).json({error:e.message})}});
 const productForUser=(p,canCost)=>{let x={...p};if(!canCost){delete x.cost}return x};
-app.get('/api/products',auth,async(req,res)=>{let canCost=await userPerm(req.user.id,'view_cost'),rows=(await pool.query("SELECT * FROM products WHERE active=true ORDER BY name")).rows;res.json(rows.map(x=>productForUser(x,canCost)))});
+app.get('/api/products',auth,async(req,res)=>{let canCost=await userPerm(req.user.id,'view_cost')||['Administrador','Gerente','Estoquista'].includes(req.user.role),rows=(await pool.query("SELECT * FROM products WHERE active=true ORDER BY name")).rows;res.json(rows.map(x=>productForUser(x,canCost)))});
 
 // ConstruGest 3.5.0 - Importação e exportação de backup de produtos
 const productHeaderKey=v=>String(v??'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
